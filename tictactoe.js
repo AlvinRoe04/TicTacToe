@@ -21,22 +21,22 @@ const gameBoard = (() => {
     const empty = 0;
     const rows = {
         upper: 0,
-        mid: 1,
+        center: 1,
         lower: 2
     }
     const columns = {
         left: 0,
-        center: 1,
+        mid: 1,
         right: 2
     }
     const rowStrings = {
         0: 'upper',
-        1: 'mid',
+        1: 'center',
         2: 'lower'
     }
     const columnStrings = {
         0: 'left',
-        1: 'center',
+        1: 'mid',
         2: 'right' 
     }    
     const board = [
@@ -54,19 +54,21 @@ const gameBoard = (() => {
         }
         gameBoardHTML.forEach(space => space.innerHTML = '');
         openSlot = 9;
+        gameManager.setGameOver(false);
     }
     const isOutOfSpace = () => openSlots <= 0;
 
-    const hasWinner = () => {
+    const hasWinner = () => {        
         return (board[rows.upper][columns.left] !== 0 && 
             (((board[rows.upper][columns.left] === board[rows.upper][columns.mid] && board[rows.upper][columns.mid] === board[rows.upper][columns.right]) 
-            || (board[rows.upper][columns.left] === board[rows.mid][columns.left] && board[rows.mid][columns.left] === board[rows.lower][columns.left]))
-            || (board[rows.upper][columns.left] === board[rows.mid][columns.mid] && board[rows.mid][columns.mid] === board[rows.lower][columns.right])))
-            || (board[rows.mid][columns.left] != 0 && (board[rows.mid][columns.left] === board[rows.mid][columns.mid] && board[rows.mid][columns.mid] === board[rows.mid][columns.right]))
+            || (board[rows.upper][columns.left] === board[rows.center][columns.left] && board[rows.center][columns.left] === board[rows.lower][columns.left]))
+            || (board[rows.upper][columns.left] === board[rows.center][columns.mid] && board[rows.center][columns.mid] === board[rows.lower][columns.right])))
+            || (board[rows.center][columns.left] != 0 && (board[rows.center][columns.left] === board[rows.center][columns.mid] && board[rows.center][columns.mid] === board[rows.center][columns.right]))
             || (board[rows.lower][columns.left] !== 0 && ((board[rows.lower][columns.left] === board[rows.lower][columns.mid] && board[rows.lower][columns.mid] === board[rows.lower][columns.right])
-            || (board[rows.lower][columns.left] === board[rows.mid][columns.mid] && board[rows.mid][columns.mid] === board[rows.upper][columns.right])))
-            || (board[rows.upper][columns.mid] !== 0 && board[rows.upper][columns.mid] === board[rows.mid][columns.mid] && board[rows.mid][columns.mid] === board[rows.lower][columns.mid])
-            || (board[rows.upper][columns.right] !== 0 && board[rows.upper][columns.right] === board[rows.mid][columns.right] && board[rows.mid][columns.right] === board[rows.lower][columns.right]);
+            || (board[rows.lower][columns.left] === board[rows.center][columns.mid] && board[rows.center][columns.mid] === board[rows.upper][columns.right])))
+            || (board[rows.upper][columns.mid] !== 0 && board[rows.upper][columns.mid] === board[rows.center][columns.mid] && board[rows.center][columns.mid] === board[rows.lower][columns.mid])
+            || (board[rows.upper][columns.right] !== 0 && board[rows.upper][columns.right] === board[rows.center][columns.right] && board[rows.center][columns.right] === board[rows.lower][columns.right]);
+            
     }
 
     const onColumnPicked = (column) => {
@@ -103,10 +105,10 @@ const midSpaces = document.querySelectorAll('.gameSpace.mid');
 const rightSpaces = document.querySelectorAll('.gameSpace.right');
 
 upperSpaces.forEach(space => space.addEventListener('click', e => gameBoard.chooseRow(gameBoard.rows.upper)));
-centerSpaces.forEach(space => space.addEventListener('click', e => gameBoard.chooseRow(gameBoard.rows.mid)));
+centerSpaces.forEach(space => space.addEventListener('click', e => gameBoard.chooseRow(gameBoard.rows.center)));
 lowerSpaces.forEach(space => space.addEventListener('click', e => gameBoard.chooseRow(gameBoard.rows.lower)));
 leftSpaces.forEach(space => space.addEventListener('click', e => gameBoard.onColumnPicked(gameBoard.columns.left)));
-midSpaces.forEach(space => space.addEventListener('click', e => gameBoard.onColumnPicked(gameBoard.columns.center)));
+midSpaces.forEach(space => space.addEventListener('click', e => gameBoard.onColumnPicked(gameBoard.columns.mid)));
 rightSpaces.forEach(space => space.addEventListener('click', e => gameBoard.onColumnPicked(gameBoard.columns.right)));
 
 
