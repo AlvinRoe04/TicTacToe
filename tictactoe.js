@@ -1,6 +1,7 @@
 const playerFactory = (placement, name, number) => { return {name, placement, number};};
 const playerOne = playerFactory('X', 'Player One', 1);
 const playerTwo = playerFactory('O', 'Player Two', 2);
+const message = document.querySelector('.message');
 
 const gameManager = (() => {
     let isPlayerOneTurn = true;
@@ -53,8 +54,10 @@ const gameBoard = (() => {
             }
         }
         gameBoardHTML.forEach(space => space.innerHTML = '');
-        openSlot = 9;
+        openSlots = 9;
         gameManager.setGameOver(false);
+        gameManager.switchPlayerTurn();
+        message.innerHTML = `${gameManager.getActivePlayer().name}'s Turn!`;
     }
     const isOutOfSpace = () => openSlots <= 0;
 
@@ -76,9 +79,6 @@ const gameBoard = (() => {
             reset();
             return;
         }
-        
-        console.log('Row: ' + row);
-        console.log(`Column: ${column}`);
 
         if(board[row][column] !== empty) return;
 
@@ -87,10 +87,20 @@ const gameBoard = (() => {
         
         board[row][column] = gameManager.getPlayerNumber();
         elementPicked.innerHTML = gameManager.getActiveSymbol();
-        gameManager.switchPlayerTurn();
+        openSlots -= 1;
+                
         if(gameBoard.hasWinner()) {
             gameManager.setGameOver(true);
-            console.log('Game had winner');
+            message.innerHTML = `Winner ${gameManager.getActivePlayer().name}!`;
+        }
+
+        else if(openSlots <= 0){
+            gameManager.setGameOver(true);
+            message.innerHTML = "Cat's Game";
+        }
+        else {
+            gameManager.switchPlayerTurn();
+            message.innerHTML = `${gameManager.getActivePlayer().name}'s Turn!`;
         }
     }
 
