@@ -41,3 +41,7 @@
     border-right: 4px;
     border-style:solid;
 }
+
+.gameboard .gameSpace:hover {
+    background-color:lightskyblue;
+}
