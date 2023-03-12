@@ -1,0 +1,43 @@
+.container {
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+}
+
+.gameboard {
+    width: 40%;
+    height: 60%;
+    align-self: center;
+    display: grid;
+    grid-template: 1fr 1fr 1fr / 1fr 1fr 1fr; 
+}
+
+.gameboard .gameSpace {
+    border: 2px;
+    border-style:solid;
+    display:flex;
+    align-items: center;
+    justify-content: center;
+    font-size: calc(10px + calc((10vh + 10vw) / 2));
+}
+
+.gameboard .gameSpace.upper {
+    border-top: 4px;
+    border-style:solid;
+}
+
+.gameboard .gameSpace.lower {
+    border-bottom: 4px;
+    border-style:solid;
+}
+
+.gameboard .gameSpace.left {
+    border-left: 4px;
+    border-style:solid;
+}
+
+.gameboard .gameSpace.right {
+    border-right: 4px;
+    border-style:solid;
+}
