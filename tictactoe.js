@@ -4,24 +4,68 @@ const playerTwo = playerFactory('O', 'Player Two', 2);
 
 const gameManager = (() => {
     let isPlayerOneTurn = true;
-    let openSlots = 9;
+    let gameOver = false;
     const getActivePlayer = () => isPlayerOneTurn ? playerOne : playerTwo;
     const getActiveSymbol = () => isPlayerOneTurn ? playerOne.placement : playerTwo.placement;
     const switchPlayerTurn = () => isPlayerOneTurn = !isPlayerOneTurn; 
     const getPlayerNumber = () => isPlayerOneTurn ? playerOne.number : playerTwo.number;
-    const onSpacePicked = (element) => {
-        
-    };
+    const setGameOver = (isGameOver) => gameOver = isGameOver; 
+    const isGameOver = () => gameOver;
 
-    return {getActivePlayer, getActiveSymbol, switchPlayerTurn, getPlayerNumber};
-})();  
+    return {getActivePlayer, getActiveSymbol, switchPlayerTurn, getPlayerNumber, setGameOver, isGameOver};
+})(); 
 
-const upper = 0;
-const mid = 1;
-const lower = 2;
-const left = 0;
-const right = 2;
-const empty = 0;
+const gameBoard = (() => {
+    let row = -1;
+    let column = -1;
+    let openSlots = 9;
+    const rowReference = {
+        upper: 0,
+        mid: 1,
+        lower: 2
+    }
+    const columnReference = {
+        left: 0,
+        center: 1,
+        right: 2
+    }    
+    const board = [
+        [0, 0, 0],
+        [0, 0, 0],
+        [0, 0, 0]
+    ];
+    const chooseRow = (rowNumber) => row = rowNumber;
+    const chooseColumn = (columnNumber) => column = columnNumber;
+    const get = (row, column) => board[row][column];
+    const reset = () => {
+        const gameBoardHTML = document.querySelectorAll('.gameSpace');
+        for(let row = 0; row < 3; row++){
+            for(let column = 0; column < 3; column++){
+                board[row][column] = empty;
+            }
+        }
+        gameBoardHTML.forEach(space => space.innerHTML = '');
+        openSlot = 9;
+    }
+    const setSpace = (row, column) => {
+
+    }
+    const isOutOfSpace = () => openSlots <= 0;
+
+    const hasWinner = () => {
+        return (board[rowReference.upper][columnReference.left] !== 0 && 
+            (((board[rowReference.upper][columnReference.left] === board[rowReference.upper][columnReference.mid] && board[rowReference.upper][columnReference.mid] === board[rowReference.upper][columnReference.right]) 
+            || (board[rowReference.upper][columnReference.left] === board[rowReference.mid][columnReference.left] && board[rowReference.mid][columnReference.left] === board[rowReference.lower][columnReference.left]))
+            || (board[rowReference.upper][columnReference.left] === board[rowReference.mid][columnReference.mid] && board[rowReference.mid][columnReference.mid] === board[rowReference.lower][columnReference.right])))
+            || (board[rowReference.mid][columnReference.left] != 0 && (board[rowReference.mid][columnReference.left] === board[rowReference.mid][columnReference.mid] && board[rowReference.mid][columnReference.mid] === board[rowReference.mid][columnReference.right]))
+            || (board[rowReference.lower][columnReference.left] !== 0 && ((board[rowReference.lower][columnReference.left] === board[rowReference.lower][columnReference.mid] && board[rowReference.lower][columnReference.mid] === board[rowReference.lower][columnReference.right])
+            || (board[rowReference.lower][columnReference.left] === board[rowReference.mid][columnReference.mid] && board[rowReference.mid][columnReference.mid] === board[rowReference.upper][columnReference.right])))
+            || (board[rowReference.upper][columnReference.mid] !== 0 && board[rowReference.upper][columnReference.mid] === board[rowReference.mid][columnReference.mid] && board[rowReference.mid][columnReference.mid] === board[rowReference.lower][columnReference.mid])
+            || (board[rowReference.upper][columnReference.right] !== 0 && board[rowReference.upper][columnReference.right] === board[rowReference.mid][columnReference.right] && board[rowReference.mid][columnReference.right] === board[rowReference.lower][columnReference.right]);
+    }
+
+    return {chooseRow, chooseColumn, get, reset, setSpace, isOutOfSpace, hasWinner, rowReference, columnReference};
+})();
 
 const columnStrings = {
     0: 'left',
@@ -42,11 +86,6 @@ const leftSpaces = document.querySelectorAll('.gameSpace.left');
 const midSpaces = document.querySelectorAll('.gameSpace.mid');
 const rightSpaces = document.querySelectorAll('.gameSpace.right');
 
-const gameBoard = [
-    [0, 0, 0],
-    [0, 0, 0],
-    [0, 0, 0]
-];
 
 let rowPicked = -1;
 let columnPicked = -1; 
@@ -73,7 +112,13 @@ function hasWinner() {
 }
 
 function onColumnPicked(columnNumber, placement){
+    if(gameManager.isGameOver()) {
+        resetGame();
+        return;
+    }
+    
     columnPicked = columnNumber;
+
     if(gameBoard[rowPicked][columnPicked] !== empty) return;
 
     const queryString = `.gameSpace.${rowStrings[rowPicked]}.${columnStrings[columnPicked]}`;
@@ -82,7 +127,23 @@ function onColumnPicked(columnNumber, placement){
     gameBoard[rowPicked][columnPicked] = placement;
     elementPicked.innerHTML = gameManager.getActiveSymbol();
     gameManager.switchPlayerTurn();
-    console.log(hasWinner());
+    if(hasWinner()){
+        gameManager.setGameOver(true);
+    }    
+}
+
+function resetGame() {
+    const gameBoardHTML = document.querySelectorAll('.gameSpace');
+
+    for(let row = 0; row < 3; row++){
+        for(let column = 0; column < 3; column++){
+            gameBoard[row][column] = empty;
+        }
+    }
+
+    gameBoardHTML.forEach(space => space.innerHTML = '');
+    gameManager.setGameOver(false);
+    gameManager.resetOpenSlotCount();
 }
 
 
